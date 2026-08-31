@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>电商评价情感分析系统</title>
+    <style>
+        body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { text-align: center; color: #333; }
+        .stats { display: flex; gap: 20px; justify-content: center; margin: 30px 0; }
+        .card { background: white; border-radius: 12px; padding: 24px; min-width: 180px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .card h3 { margin: 0 0 10px 0; font-size: 14px; color: #666; }
+        .card .number { font-size: 36px; font-weight: bold; }
+        .card .percent { font-size: 14px; color: #999; margin-top: 5px; }
+        .positive { color: #4CAF50; }
+        .negative { color: #f44336; }
+        .neutral { color: #FF9800; }
+        .total { color: #2196F3; }
+        .dashboard { text-align: center; margin: 30px 0; }
+        .dashboard img { max-width: 100%; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+        .keywords { background: white; border-radius: 12px; padding: 24px; margin: 30px auto; max-width: 600px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .keywords h2 { margin-top: 0; color: #333; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f8f8; color: #666; font-weight: normal; }
+        .nav { text-align: center; margin: 20px 0; }
+        .nav a { display: inline-block; padding: 10px 20px; background: #2196F3; color: white; text-decoration: none; border-radius: 8px; margin: 0 10px; }
+        .nav a:hover { background: #1976D2; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 电商评价情感分析系统</h1>
+        <div class="stats">
+            <div class="card">
+                <h3>总评价数</h3>
+                <div class="number total">{{ data.total }}</div>
+            </div>
+            <div class="card">
+                <h3>正面评价</h3>
+                <div class="number positive">{{ data.positive }}</div>
+                <div class="percent">{{ "%.1f"|format(data.positive / data.total * 100) if data.total > 0 else 0 }}%</div>
+            </div>
+            <div class="card">
+                <h3>负面评价</h3>
+                <div class="number negative">{{ data.negative }}</div>
+                <div class="percent">{{ "%.1f"|format(data.negative / data.total * 100) if data.total > 0 else 0 }}%</div>
+            </div>
+            <div class="card">
+                <h3>中性评价</h3>
+                <div class="number neutral">{{ data.neutral }}</div>
+                <div class="percent">{{ "%.1f"|format(data.neutral / data.total * 100) if data.total > 0 else 0 }}%</div>
+            </div>
+        </div>
+        {% if data.dashboard_exists %}
+        <div class="dashboard">
+            <h2>分析看板</h2>
+            <img src="{{ url_for('static', filename='分析看板.png') }}" alt="分析看板">
+        </div>
+        {% endif %}
+        {% if data.keywords %}
+        <div class="keywords">
+            <h2>🔍 差评关键词 Top 10</h2>
+            <table>
+                <thead><tr><th>排名</th><th>关键词</th><th>出现次数</th></tr></thead>
+                <tbody>
+                    {% for kw in data.keywords %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ kw.keyword }}</td>
+                        <td>{{ kw.count }} 次</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        <div class="nav">
+            <a href="/negative">查看所有负面评价 →</a>
+        </div>
+    </div>
+</body>
+</html>
